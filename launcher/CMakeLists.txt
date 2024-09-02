@@ -24,6 +24,8 @@ set(CORE_SOURCES
     NullInstance.h
     MMCZip.h
     MMCZip.cpp
+    Untar.h
+    Untar.cpp
     StringUtils.h
     StringUtils.cpp
     QVariantUtils.h
@@ -138,7 +140,6 @@ set(NET_SOURCES
     net/HeaderProxy.h
     net/RawHeaderProxy.h
     net/ApiHeaderProxy.h
-    net/StaticHeaderProxy.h
     net/ApiDownload.h
     net/ApiDownload.cpp
     net/ApiUpload.cpp
@@ -163,6 +164,8 @@ set(LAUNCH_SOURCES
     launch/steps/Update.h
     launch/steps/QuitAfterGameStop.cpp
     launch/steps/QuitAfterGameStop.h
+    launch/steps/PrintServers.cpp
+    launch/steps/PrintServers.h
     launch/LaunchStep.cpp
     launch/LaunchStep.h
     launch/LaunchTask.cpp
@@ -261,8 +264,8 @@ set(MINECRAFT_SOURCES
     minecraft/launch/ExtractNatives.h
     minecraft/launch/LauncherPartLaunch.cpp
     minecraft/launch/LauncherPartLaunch.h
-    minecraft/launch/MinecraftServerTarget.cpp
-    minecraft/launch/MinecraftServerTarget.h
+    minecraft/launch/MinecraftTarget.cpp
+    minecraft/launch/MinecraftTarget.h
     minecraft/launch/PrintInstanceInfo.cpp
     minecraft/launch/PrintInstanceInfo.h
     minecraft/launch/ReconstructAssets.cpp
@@ -271,6 +274,8 @@ set(MINECRAFT_SOURCES
     minecraft/launch/ScanModFolders.h
     minecraft/launch/VerifyJavaInstall.cpp
     minecraft/launch/VerifyJavaInstall.h
+    minecraft/launch/AutoInstallJava.cpp
+    minecraft/launch/AutoInstallJava.h
 
     minecraft/GradleSpecifier.h
     minecraft/MinecraftInstance.cpp
@@ -362,13 +367,17 @@ set(MINECRAFT_SOURCES
     minecraft/AssetsUtils.h
     minecraft/AssetsUtils.cpp
 
-    # Minecraft services
-    minecraft/services/CapeChange.cpp
-    minecraft/services/CapeChange.h
-    minecraft/services/SkinUpload.cpp
-    minecraft/services/SkinUpload.h
-    minecraft/services/SkinDelete.cpp
-    minecraft/services/SkinDelete.h
+    # Minecraft skins
+    minecraft/skins/CapeChange.cpp
+    minecraft/skins/CapeChange.h
+    minecraft/skins/SkinUpload.cpp
+    minecraft/skins/SkinUpload.h
+    minecraft/skins/SkinDelete.cpp
+    minecraft/skins/SkinDelete.h
+    minecraft/skins/SkinModel.cpp
+    minecraft/skins/SkinModel.h
+    minecraft/skins/SkinList.cpp
+    minecraft/skins/SkinList.h
 
     minecraft/Agent.h)
 
@@ -412,8 +421,6 @@ set(SETTINGS_SOURCES
 set(JAVA_SOURCES
     java/JavaChecker.h
     java/JavaChecker.cpp
-    java/JavaCheckerJob.h
-    java/JavaCheckerJob.cpp
     java/JavaInstall.h
     java/JavaInstall.cpp
     java/JavaInstallList.h
@@ -422,6 +429,18 @@ set(JAVA_SOURCES
     java/JavaUtils.cpp
     java/JavaVersion.h
     java/JavaVersion.cpp
+
+    java/JavaMetadata.h
+    java/JavaMetadata.cpp
+    java/download/ArchiveDownloadTask.cpp
+    java/download/ArchiveDownloadTask.h
+    java/download/ManifestDownloadTask.cpp
+    java/download/ManifestDownloadTask.h
+
+    ui/java/InstallJavaDialog.h
+    ui/java/InstallJavaDialog.cpp
+    ui/java/VersionList.h
+    ui/java/VersionList.cpp
 )
 
 set(TRANSLATIONS_SOURCES
@@ -741,6 +760,8 @@ SET(LAUNCHER_SOURCES
     DataMigrationTask.cpp
     ApplicationMessage.h
     ApplicationMessage.cpp
+    SysInfo.h
+    SysInfo.cpp
 
     # GUI - general utilities
     DesktopServices.h
@@ -779,16 +800,12 @@ SET(LAUNCHER_SOURCES
     # GUI - windows
     ui/GuiUtil.h
     ui/GuiUtil.cpp
-    ui/ColorCache.h
-    ui/ColorCache.cpp
     ui/MainWindow.h
     ui/MainWindow.cpp
     ui/InstanceWindow.h
     ui/InstanceWindow.cpp
 
     # FIXME: maybe find a better home for this.
-    SkinUtils.cpp
-    SkinUtils.h
     FileIgnoreProxy.cpp
     FileIgnoreProxy.h
     FastFileIconProvider.cpp
@@ -1015,8 +1032,6 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/ReviewMessageBox.h
     ui/dialogs/VersionSelectDialog.cpp
     ui/dialogs/VersionSelectDialog.h
-    ui/dialogs/SkinUploadDialog.cpp
-    ui/dialogs/SkinUploadDialog.h
     ui/dialogs/ResourceDownloadDialog.cpp
     ui/dialogs/ResourceDownloadDialog.h
     ui/dialogs/ScrollMessageBox.cpp
@@ -1030,7 +1045,12 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/InstallLoaderDialog.cpp
     ui/dialogs/InstallLoaderDialog.h
 
+    ui/dialogs/skins/SkinManageDialog.cpp
+    ui/dialogs/skins/SkinManageDialog.h
+
     # GUI - widgets
+    ui/widgets/CheckComboBox.cpp
+    ui/widgets/CheckComboBox.h
     ui/widgets/Common.cpp
     ui/widgets/Common.h
     ui/widgets/CustomCommands.cpp
@@ -1159,7 +1179,6 @@ qt_wrap_ui(LAUNCHER_UI
     ui/dialogs/NewComponentDialog.ui
     ui/dialogs/NewsDialog.ui
     ui/dialogs/ProfileSelectDialog.ui
-    ui/dialogs/SkinUploadDialog.ui
     ui/dialogs/ExportInstanceDialog.ui
     ui/dialogs/ExportPackDialog.ui
     ui/dialogs/ExportToModListDialog.ui
@@ -1173,6 +1192,8 @@ qt_wrap_ui(LAUNCHER_UI
     ui/dialogs/ScrollMessageBox.ui
     ui/dialogs/BlockedModsDialog.ui
     ui/dialogs/ChooseProviderDialog.ui
+
+    ui/dialogs/skins/SkinManageDialog.ui
 )
 
 qt_wrap_ui(PRISM_UPDATE_UI

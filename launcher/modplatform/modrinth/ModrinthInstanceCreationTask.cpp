@@ -173,7 +173,7 @@ bool ModrinthCreationTask::createInstance()
     // Keep index file in case we need it some other time (like when changing versions)
     QString new_index_place(FS::PathCombine(parent_folder, "modrinth.index.json"));
     FS::ensureFilePathExists(new_index_place);
-    QFile::rename(index_path, new_index_place);
+    FS::move(index_path, new_index_place);
 
     auto mcPath = FS::PathCombine(m_stagingPath, m_root_path);
 
@@ -183,7 +183,7 @@ bool ModrinthCreationTask::createInstance()
         Override::createOverrides("overrides", parent_folder, override_path);
 
         // Apply the overrides
-        if (!QFile::rename(override_path, mcPath)) {
+        if (!FS::move(override_path, mcPath)) {
             setError(tr("Could not rename the overrides folder:\n") + "overrides");
             return false;
         }
@@ -241,9 +241,7 @@ bool ModrinthCreationTask::createInstance()
 
     for (auto file : m_files) {
         auto fileName = file.path;
-#ifdef Q_OS_WIN
         fileName = FS::RemoveInvalidPathChars(fileName);
-#endif
         auto file_path = FS::PathCombine(root_modpack_path, fileName);
         if (!root_modpack_url.isParentOf(QUrl::fromLocalFile(file_path))) {
             // This means we somehow got out of the root folder, so abort here to prevent exploits
@@ -348,23 +346,8 @@ bool ModrinthCreationTask::parseManifest(const QString& index_path,
                 }
 
                 QJsonObject hashes = Json::requireObject(modInfo, "hashes");
-                QString hash;
-                QCryptographicHash::Algorithm hashAlgorithm;
-                hash = Json::ensureString(hashes, "sha1");
-                hashAlgorithm = QCryptographicHash::Sha1;
-                if (hash.isEmpty()) {
-                    hash = Json::ensureString(hashes, "sha512");
-                    hashAlgorithm = QCryptographicHash::Sha512;
-                    if (hash.isEmpty()) {
-                        hash = Json::ensureString(hashes, "sha256");
-                        hashAlgorithm = QCryptographicHash::Sha256;
-                        if (hash.isEmpty()) {
-                            throw JSONValidationError("No hash found for: " + file.path);
-                        }
-                    }
-                }
-                file.hash = QByteArray::fromHex(hash.toLatin1());
-                file.hashAlgorithm = hashAlgorithm;
+                file.hash = QByteArray::fromHex(Json::requireString(hashes, "sha512").toLatin1());
+                file.hashAlgorithm = QCryptographicHash::Sha512;
 
                 // Do not use requireUrl, which uses StrictMode, instead use QUrl's default TolerantMode
                 // (as Modrinth seems to incorrectly handle spaces)

@@ -67,6 +67,7 @@ class Config {
     QString VERSION_CHANNEL;
 
     bool UPDATER_ENABLED = false;
+    bool JAVA_DOWNLOADER_ENABLED = false;
 
     /// A short string identifying this build's platform or distribution.
     QString BUILD_PLATFORM;
@@ -163,7 +164,6 @@ class Config {
 
     QString RESOURCE_BASE = "https://resources.download.minecraft.net/";
     QString LIBRARY_BASE = "https://libraries.minecraft.net/";
-    QString AUTH_BASE = "https://authserver.mojang.com/";
     QString IMGUR_BASE_URL = "https://api.imgur.com/3/";
     QString FMLLIBS_BASE_URL = "https://files.prismlauncher.org/fmllibs/";  // FIXME: move into CMakeLists
     QString TRANSLATIONS_BASE_URL = "https://i18n.prismlauncher.org/";      // FIXME: move into CMakeLists

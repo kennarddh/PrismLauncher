@@ -2,7 +2,7 @@
 /*
  *  Prism Launcher - Minecraft Launcher
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
- *  Copyright (c) 2023 Trial97 <alexandru.tripon97@gmail.com>
+ *  Copyright (c) 2023-2024 Trial97 <alexandru.tripon97@gmail.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -176,7 +176,7 @@ class ExportToZipTask : public Task {
                     QString destinationPrefix = "",
                     bool followSymlinks = false,
                     bool utf8Enabled = false)
-        : ExportToZipTask(outputPath, QDir(dir), files, destinationPrefix, followSymlinks, utf8Enabled){};
+        : ExportToZipTask(outputPath, QDir(dir), files, destinationPrefix, followSymlinks, utf8Enabled) {};
 
     virtual ~ExportToZipTask() = default;
 
@@ -204,6 +204,34 @@ class ExportToZipTask : public Task {
 
     QFuture<ZipResult> m_build_zip_future;
     QFutureWatcher<ZipResult> m_build_zip_watcher;
+};
+
+class ExtractZipTask : public Task {
+   public:
+    ExtractZipTask(QString input, QDir outputDir, QString subdirectory = "")
+        : ExtractZipTask(std::make_shared<QuaZip>(input), outputDir, subdirectory)
+    {}
+    ExtractZipTask(std::shared_ptr<QuaZip> input, QDir outputDir, QString subdirectory = "")
+        : m_input(input), m_output_dir(outputDir), m_subdirectory(subdirectory)
+    {}
+    virtual ~ExtractZipTask() = default;
+
+    using ZipResult = std::optional<QString>;
+
+   protected:
+    virtual void executeTask() override;
+    bool abort() override;
+
+    ZipResult extractZip();
+    void finish();
+
+   private:
+    std::shared_ptr<QuaZip> m_input;
+    QDir m_output_dir;
+    QString m_subdirectory;
+
+    QFuture<ZipResult> m_zip_future;
+    QFutureWatcher<ZipResult> m_zip_watcher;
 };
 #endif
 }  // namespace MMCZip
