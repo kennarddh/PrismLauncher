@@ -585,7 +585,6 @@ bool AccountList::anyAccountIsValid()
     // return false;
     for (auto account : m_accounts) {
         return true;
-        }
     }
     return false;
 }
