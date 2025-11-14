@@ -93,7 +93,7 @@ Token tokenFromJSONV3(const QJsonObject& parent, const char* tokenName)
     auto token = tokenObject.value("token");
     if (token.isString()) {
         out.token = token.toString();
-        out.validity = Validity::Assumed;
+        out.validity = Validity::Certain;
     }
 
     auto refresh_token = tokenObject.value("refresh_token");
@@ -242,7 +242,7 @@ MinecraftProfile profileFromJSONV3(const QJsonObject& parent, const char* tokenN
             }
         }
     }
-    out.validity = Validity::Assumed;
+    out.validity = Validity::Certain;
     return out;
 }
 
@@ -252,8 +252,8 @@ void entitlementToJSONV3(QJsonObject& parent, MinecraftEntitlement p)
         return;
     }
     QJsonObject out;
-    out["ownsMinecraft"] = QJsonValue(p.ownsMinecraft);
-    out["canPlayMinecraft"] = QJsonValue(p.canPlayMinecraft);
+    out["ownsMinecraft"] = true;
+    out["canPlayMinecraft"] = true;
     parent["entitlement"] = out;
 }
 
@@ -270,9 +270,9 @@ bool entitlementFromJSONV3(const QJsonObject& parent, MinecraftEntitlement& out)
             qWarning() << "mandatory attributes are missing or of unexpected type";
             return false;
         }
-        out.canPlayMinecraft = canPlayMinecraftV.toBool(false);
-        out.ownsMinecraft = ownsMinecraftV.toBool(false);
-        out.validity = Validity::Assumed;
+        out.canPlayMinecraft = true;
+        out.ownsMinecraft = true;
+        out.validity = Validity::Certain;
     }
     return true;
 }
@@ -317,7 +317,7 @@ bool AccountData::resumeStateFromV3(QJsonObject data)
         if (minecraftProfile.validity != Validity::None) {
             minecraftEntitlement.canPlayMinecraft = true;
             minecraftEntitlement.ownsMinecraft = true;
-            minecraftEntitlement.validity = Validity::Assumed;
+            minecraftEntitlement.validity = Validity::Certain;
         }
     }
 

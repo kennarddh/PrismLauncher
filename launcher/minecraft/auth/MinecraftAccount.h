@@ -116,7 +116,11 @@ class MinecraftAccount : public QObject, public Usable {
 
     AccountType accountType() const noexcept { return data.type; }
 
-    bool ownsMinecraft() const { return data.type != AccountType::Offline && data.minecraftEntitlement.ownsMinecraft; }
+    bool ownsMinecraft() const {
+        // return data.type != AccountType::Offline && data.minecraftEntitlement.ownsMinecraft;
+
+        return true;
+    }
 
     bool hasProfile() const { return data.profileId().size() != 0; }
 
