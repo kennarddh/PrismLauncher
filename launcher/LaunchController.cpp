@@ -134,8 +134,6 @@ LaunchDecision LaunchController::decideLaunchMode()
         return LaunchDecision::Continue;
     }
 
-    const auto* accounts = APPLICATION->accounts();
-
     // Offline accounts can launch directly in offline mode without needing an online account.
     if (m_accountToUse->accountType() == AccountType::Offline) {
         m_actualLaunchMode = LaunchMode::Offline;
